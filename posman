@@ -1,0 +1,43 @@
+#!/bin/bash -e
+#From:Sat May 16 13:41:55 2020
+#(C)Code by Powerlean 2020
+#Blog:powerlean.top
+#Email:bluebreeze191@gmail.com
+#GitHub:EdgeS5352 (Solaris Eco)
+#coding:UTF-8
+
+
+#特殊字符
+export yellow="\033[33m"
+export red="\033[31m"
+export green="\033[32m"
+export suffix="\033[0m"
+
+
+#中文
+export error_null_cn="echo -e ${red} 请指定一个参数 ${suffix}"
+
+
+#English
+export error_null_en="echo -e ${red} Please input a argument ${suffix}"
+
+
+##多语言设定##
+if [ ${LANG} == en_US.UTF-8 -o ${LANG} == C.UTF-8 ]; then 
+
+#English设定#
+${error_null}=${error_null_en}
+
+elif [ ${LANG} == zh_CN.UTF-8 -o ${LANG} == zh_TW.UTF-8 ]; then
+
+#中文设定#
+${error_null}=${error_null_cn}
+
+fi
+
+
+#安装
+if [ "$1" == "state" ]; then
+  if [ not "$2" == "not" ]; then
+  ${error_null}
+
