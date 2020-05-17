@@ -26,12 +26,12 @@ export error_null_en="echo -e ${red} Please input a argument ${suffix}"
 if [ ${LANG} == en_US.UTF-8 -o ${LANG} == C.UTF-8 ]; then 
 
 #English设定#
-${error_null}=${error_null_en}
+export error_null=${error_null_en}
 
 elif [ ${LANG} == zh_CN.UTF-8 -o ${LANG} == zh_TW.UTF-8 ]; then
 
 #中文设定#
-${error_null}=${error_null_cn}
+export error_null=${error_null_cn}
 
 fi
 
@@ -40,4 +40,9 @@ fi
 if [ "$1" == "state" ]; then
   if [ not "$2" == "not" ]; then
   ${error_null}
+else
+  curl
+
+
+
 
