@@ -1,6 +1,6 @@
 ![](https://i.loli.net/2020/05/16/yHTszl5Zr4pbEBQ.jpg)
 
-#### Power Synthetic Manager是一个高效的脚本安装管理器
+#### Power Collector是一个高效的脚本安装管理器
 * 访问我的[博客](https://powerlean.top)
 
 ## 🏁快速开始
