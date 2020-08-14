@@ -1,7 +1,8 @@
 ![](https://i.loli.net/2020/05/16/yHTszl5Zr4pbEBQ.jpg)
 
-#### Power Collector是一个高效的脚本安装管理器
+#### Power Collector是一个结构简单，易操作的类包管理器
 * 访问我的[博客](https://powerlean.top)
+* 若要参考源码，请移步至我的[网站资料库](https://https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco)
 
 ## 🏁快速开始
 `curl -s powerlean.top/blob/poco.setup | bash`
