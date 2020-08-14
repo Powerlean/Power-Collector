@@ -18,13 +18,13 @@
 - -y          跳过确认环节
 - -s          静默模式，不产生输出
 
-***
+###  组成结构
 
-|  poco的组成部分   |
-|  ----  |
-| [poco](https://https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco)  |
-| [poco.setup](https://https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.setup) |
-| [poco.update](https://https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.update) |
-| [poco.list](https://https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.list) |
-| [poco.note](https://https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.note) |
-| [poco-rescue](https://https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco-rescue) |
+|  poco的组成部分   | 作用 |
+|  ----  | ------------------------------ |
+| [poco](https://https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco)  | Power Collector的主体部分 |
+| [poco.setup](https://https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.setup) | 安装脚本，运行安装更新等操作 |
+| [poco.update](https://https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.update) | 更新脚本，检测poco主体部分的版本 |
+| [poco.list](https://https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.list) | 软件包列表，可下载的软件包均写入此处 |
+| [poco.note](https://https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.note) | 更新日志，说明更新内容 |
+| [poco-rescue](https://https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco-rescue) | 修复文件，替换损坏的文件主体 |
