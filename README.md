@@ -29,3 +29,19 @@
 | [poco.list](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.list) | 软件包列表，可下载的软件包均写入此处 |
 | [poco.note](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.note) | 更新日志，说明更新内容 |
 | [poco-rescue](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco-rescue) | 修复文件，替换损坏的文件主体|
+
+
+### 部署可用下载源
+
+Power Collector原理简单，部署下载源也非常容易，只需要一个有效网站便可部署。
+
+你需要在网站的根目录"/"下创建两个目录:
+
+- blob/
+- tree/
+
+*当然，文件夹也可以设置成其他名称，但需注意将两者进行区分。*
+
+在"blob/"目录下创建以下三个文件：
+
+- poco.update
