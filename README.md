@@ -62,4 +62,9 @@ Power Collector原理简单，部署下载源也非常容易，只需要一个�
 
 `export depends="XXX XXX XXX"`
 
+**实例**:
+现有一个名为`poco`的程序，它需要依赖于`poco.conf`和`poco-rescue`才能运行，则需要在它的依赖声明文件`poco.tree`编写以下内容:
 
+`export depends="poco.conf poco-rescue"`
+
+*列表的依赖程序名称直接
