@@ -26,7 +26,7 @@
 | [poco](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco)  | Power Collector的主体部分 |
 | [poco.setup](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.setup) | 安装脚本，运行安装更新等操作 |
 | [poco.update](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.update) | 更新脚本，检测poco主体部分的版本 |
-| [poco.list](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.list) | 软件包列表，可下载的软件包均写入此处 |
+| [poco.list](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.list) | 软件包列表，载入各个软件包的描述 |
 | [poco.note](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.note) | 更新日志，声明更新内容 |
 | [poco-rescue](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco-rescue) | 修复文件，替换损坏的文件主体|
 | [poco.conf](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.conf) | 控制文件，存放指向路径|
@@ -42,7 +42,7 @@ Power Collector原理简单，部署下载源也非常容易，只需要一个�
 
 *当然，文件夹也可以设置成其他名称，但需注意将两者进行区分。*
 *请将软件包及其依赖全部存放至`blob/`目录。*
-*[单击此处](https://github.com/EdgeS5352/Power-Collector/blob/master/README.md#依赖声明文件的编写格式)了解`tree/`目录的文件编写规范。"
+*[单击此处](https://github.com/EdgeS5352/Power-Collector/blob/master/README.md#依赖声明文件的编写格式)了解`tree/`目录的文件编写规范。*
 
 **在`blob/`目录下创建以下两个文件：**
 
