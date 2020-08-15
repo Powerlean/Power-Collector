@@ -29,7 +29,7 @@
 | [poco.list](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.list) | 软件包列表，可下载的软件包均写入此处 |
 | [poco.note](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.note) | 更新日志，说明更新内容 |
 | [poco-rescue](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco-rescue) | 修复文件，替换损坏的文件主体|
-
+| [poco.conf](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.conf) | 控制文件，存放指向路径|
 
 ### 部署可用下载源
 
@@ -41,7 +41,25 @@ Power Collector原理简单，部署下载源也非常容易，只需要一个�
 - tree/
 
 *当然，文件夹也可以设置成其他名称，但需注意将两者进行区分。*
+*请将软件包及其依赖全部存放至`blob/`目录。*
+*[单击此处](https://github.com/EdgeS5352/)了解"tree/"目录的文件编写规范。"
 
-**在"blob/"目录下创建以下三个文件：**
+**在"blob/"目录下创建以下两个文件：**
 
-- poco.update
+- poco.conf
+- poco.list
+
+*请自行编写可执行文件将用户原先的`poco.conf`替换为你所编写的版本，请按照该文件内的批注规范填写指向地址。*
+*请参考本项目中的"[poco.list](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.list)"格式来了解如何编写软件包列表。*
+
+### 依赖声明文件的编写格式
+
+每个软件包都对应一个**依赖声明文件**，它们的命名有一个固定的格式：
+
+假设`blob/`目录下现存放有文件`XXX`,那么它的对应依赖声明文件必须命名为`XXX.tree`。
+
+**依赖声明文件**的内容也有固定的格式，格式如下:
+
+`export depends="XXX XXX XXX`
+
+
