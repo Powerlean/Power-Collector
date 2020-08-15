@@ -32,8 +32,8 @@
 | [poco.conf](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.conf) | 控制文件，存放指向路径|
 
 ### 功能概览
-| 功能 |
-| --------|-- |
+|     功能    |
+| ---------- |
 | 自动编译 | × |
 | 匹配依赖 | √ |
 | 搜索查找 | √ |
