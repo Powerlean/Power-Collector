@@ -42,7 +42,7 @@ Power Collector原理简单，部署下载源也非常容易，只需要一个�
 
 *当然，文件夹也可以设置成其他名称，但需注意将两者进行区分。*
 *请将软件包及其依赖全部存放至`blob/`目录。*
-*[单击此处](https://github.com/EdgeS5352/)了解`tree/`目录的文件编写规范。"
+*[单击此处](https://github.com/EdgeS5352/Power-Collector/blob/master/README.md#依赖声明文件的编写格式)了解`tree/`目录的文件编写规范。"
 
 **在`blob/`目录下创建以下两个文件：**
 
@@ -63,7 +63,7 @@ Power Collector原理简单，部署下载源也非常容易，只需要一个�
 `export depends="XXX XXX XXX"`
 
 **实例**:
-现有一个名为`poco`的程序，它需要依赖于`poco.conf`和`poco-rescue`才能运行，则需要在它的依赖声明文件`poco.tree`编写以下内容:
+现有一个名为`poco`的程序，它需要依赖于`poco.conf`和`poco-rescue`才能运行，则需要在它的依赖声明文件`poco.tree`中编写以下内容:
 
 `export depends="poco.conf poco-rescue"`
 
@@ -78,4 +78,4 @@ Power Collector原理简单，部署下载源也非常容易，只需要一个�
 
 **现在你可以开始部署你的下载源了！**
 
-### 以上
+### 以上。
