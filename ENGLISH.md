@@ -29,7 +29,7 @@ suffix:
 | [poco.setup](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.setup) | Setup script |
 | [poco.update](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.update) | Update script |
 | [poco.list](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.list) | List of packages |
-| [poco.note](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.note) | Release Note |
+| [poco.note](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.note) | Release note |
 | [poco-rescue](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco-rescue) | Fix script|
 | [poco.conf](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.conf) | Config file |
 
@@ -53,6 +53,7 @@ Deploy a programs library for **Power Collector**,you just need a **website**.
 - poco.list
 
 *Please write a executable program to replace the user's `poco.conf`*
+
 *Please  consult [poco.list's format](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.list) to learn how to write packages list.*
 
 ###  File's format under the `tree/`
