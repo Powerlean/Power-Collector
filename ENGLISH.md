@@ -67,7 +67,7 @@ The file have a format,such as:
 
 **Examples**:
 
-Now I have a program called `poco`,it relies on `poco.conf`and`poco-rescue`，like that,I need create a file called `poco.tree`,and  write the following contents:
+Now I have a program called `poco`,it relies on `poco.conf` and `poco-rescue`，like that,I need create a file called `poco.tree`,and  write the following contents:
 
 `export depends="poco.conf poco-rescue"`
 
