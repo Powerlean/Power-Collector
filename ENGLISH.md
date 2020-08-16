@@ -16,8 +16,8 @@ Command:
 - search      **Search the software description**
 
 suffix:
-- -y          Skip confirmation
-- -s          Silent mode
+- -y          **Skip confirmation**
+- -s          **Silent mode**
 
 ###  Structure
 
