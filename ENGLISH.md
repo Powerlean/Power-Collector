@@ -36,7 +36,7 @@ suffix:
 
 ### Deploy your programs library
 
-Deploy a programs library for **Power Collector**,you just need a web site.
+Deploy a programs library for **Power Collector**,you just need a **website**.
 
 **Creates both directories in the project root directory `/`**
 
