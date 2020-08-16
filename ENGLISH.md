@@ -38,7 +38,7 @@ suffix:
 
 Deploy a programs library for **Power Collector**,you just need a **website**.
 
-**Creates both directories in the project root directory `/`**
+**Create both directories in the project root directory `/`**
 
 - blob/
 - tree/
@@ -47,7 +47,7 @@ Deploy a programs library for **Power Collector**,you just need a **website**.
 *Please drag all programs into the`blob/`.*
 *[Click here](https://github.com/EdgeS5352/Power-Collector/blob/master/ENGLISH.md#files-format-under-the-tree) to know about the file's format under the`tree/`.*
 
-**Creates both files in the `blob/`**
+**Create both files in the `blob/`**
 
 - poco.conf
 - poco.list
