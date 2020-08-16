@@ -2,7 +2,7 @@
 
 ![](https://powerlean.gitee.io/images/QQ%E5%9B%BE%E7%89%8720200816120219.jpg)
 
-#### Power Collector is a plain packages manager 
+#### Power Collector is a simple packages manager 
 * View my [blog](https://powerlean.top)
 * If you want to reference my code,please access my [repository](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco)
 
