@@ -75,7 +75,7 @@ If the program don't need any dependency,then we need do such this:
 
 `export depends=""`
 
-*You must creates such this file for your all programs*
+*You must creates such this file for your all programs.*
 
 
 **Now action!**
