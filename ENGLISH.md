@@ -38,7 +38,7 @@ suffix:
 
 Deploy a programs library for **Power Collector**,you just need a web site.
 
-**Creates both directories in the project root directory `/`:**
+**Creates both directories in the project root directory `/`**
 
 - blob/
 - tree/
