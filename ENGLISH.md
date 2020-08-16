@@ -34,52 +34,50 @@ suffix:
 | [poco.conf](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.conf) | Config file |
 
 
-### 部署可用下载源
+### Deploy your programs library
 
-**Power Collector**原理简单，部署下载源也非常容易，只需要一个有效网站便可部署。
+Deploy a programs library for **Power Collector**,you just need a web site.
 
-**你需要在网站的根目录`/`下创建两个目录:**
+**Creates two directories in the project root directory `/`:**
 
 - blob/
 - tree/
 
-*当然，文件夹也可以设置成其他名称，但需注意将两者进行区分。*
-*请将软件包及其依赖全部存放至`blob/`目录。*
-*[单击此处](https://github.com/EdgeS5352/Power-Collector/blob/master/README.md#依赖声明文件的编写格式)了解`tree/`目录下的文件编写规范。*
+*Also,you can rename these directory.*
+*Please drag all programs into the`blob/`.*
+*[Click here](https://github.com/EdgeS5352/Power-Collector/blob/master/ENGLISH.md#File's format under the tree/)to know about the file's format under the`tree/`.*
 
-**在`blob/`目录下创建以下两个文件：**
+**Creates two files in the `blob/`**
 
 - poco.conf
 - poco.list
 
-*请自行编写可执行文件将用户原先的`poco.conf`替换为你所编写的版本，请按照该文件内的批注规范填写指向地址。*
-*请参考本项目中的[poco.list](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.list)格式来了解如何编写软件包列表。*
+*Please write a executable program to replace the user's `poco.conf`*
+*Please  consult [poco.list's format](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.list) to learn how to write packages list.*
 
-### 依赖声明文件的编写格式
+###  File's format under the `tree/`
 
-每个软件包都必须对应一个**依赖声明文件**，它们的命名有一个固定的格式：
+You need **declare the dependencies** for your programs：
 
-假设`blob/`目录下现存放有文件`XXX`,那么它的对应依赖声明文件必须命名为`XXX.tree`。
+If you have a program called `XXX`,then you must create a file called `XXX.tree`.
 
-**依赖声明文件**的内容也有固定的格式，格式如下:
+The file have a format,such as:
 
 `export depends="XXX XXX XXX"`
 
-**实例**:
-现有一个名为`poco`的程序，它需要依赖于`poco.conf`和`poco-rescue`才能运行，则需要在它的依赖声明文件`poco.tree`中编写以下内容:
+**Examples**:
+
+Now I have a program called `poco`,it relies on `poco.conf`and`poco-rescue`，like that,I need create a file called `poco.tree`,and  write the following contents:
 
 `export depends="poco.conf poco-rescue"`
 
-*列表中每两个依赖程序名称之间用一个空格分隔。*
-
-
-假设某程序不需要任何依赖，则将变量内容留空:
+If the program don't need any dependency,then we need do such this:
 
 `export depends=""`
 
-*程序不需要依赖的情况下仍然须填写依赖声明文件，否则`poco`将会被引导到错误的路径。*
+*You must creates such this file for your all programs*
 
 
-**现在，可以开始部署你的下载源了！**
+**Now action!**
 
-### 以上。
+### The end
