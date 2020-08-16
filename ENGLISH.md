@@ -45,7 +45,7 @@ Deploy a programs library for **Power Collector**,you just need a web site.
 
 *Also,you can rename these directory.*
 *Please drag all programs into the`blob/`.*
-*[Click here](https://github.com/EdgeS5352/Power-Collector/blob/master/ENGLISH.md#files-format-under-the-tree)to know about the file's format under the`tree/`.*
+*[Click here](https://github.com/EdgeS5352/Power-Collector/blob/master/ENGLISH.md#files-format-under-the-tree) to know about the file's format under the`tree/`.*
 
 **Creates both files in the `blob/`**
 
