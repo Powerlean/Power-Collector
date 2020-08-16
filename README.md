@@ -1,4 +1,4 @@
-![](https://i.loli.net/2020/05/16/yHTszl5Zr4pbEBQ.jpg)
+![](https://powerlean.gitee.io/images/QQ%E5%9B%BE%E7%89%8720200816120219.jpg)
 
 #### Power Collector是一个结构简单，易操作的类包管理器
 * 访问我的[博客](https://powerlean.top)
