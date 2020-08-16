@@ -9,11 +9,11 @@
 
 ### 📋Usage：poco [command] [argument] [suffix]
 Command:
-- help         Get help with poco
-- install     Get a specified file
-- list        List all files which can be download
-- remove      Delete a specified file
-- search      Search the software description
+- help         **Get help with poco**
+- install     **Get a specified file**
+- list        **List all files which can be download**
+- remove      **Delete a specified file**
+- search      **Search the software description**
 
 suffix:
 - -y          Skip confirmation
@@ -23,13 +23,13 @@ suffix:
 
 |  poco's OC  | Role |
 |  ----  | ------------------------------ |
-| [poco](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco)  | Power Collector的主体部分 |
-| [poco.setup](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.setup) | 安装脚本，运行安装更新等操作 |
-| [poco.update](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.update) | 更新脚本，检测poco主体部分的版本 |
-| [poco.list](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.list) | 软件包列表，载入各个软件包的描述 |
-| [poco.note](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.note) | 更新日志，声明更新内容 |
-| [poco-rescue](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco-rescue) | 修复文件，替换损坏的文件主体|
-| [poco.conf](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.conf) | 控制文件，存放指向路径|
+| [poco](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco)  | Power Collector's subject |
+| [poco.setup](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.setup) | Setup script |
+| [poco.update](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.update) | Update script |
+| [poco.list](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.list) | List of package |
+| [poco.note](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.note) | Release Note |
+| [poco-rescue](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco-rescue) | Fix script|
+| [poco.conf](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.conf) | Config file |
 
 
 ### 部署可用下载源
