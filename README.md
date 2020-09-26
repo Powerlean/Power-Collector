@@ -2,7 +2,8 @@
 
 ![](https://ae01.alicdn.com/kf/Hec54846cf57c4cbfa0bff6cae6090ff1E.jpg)
 
-#### Power Collector is a simple packages manager 
+#### Power Collector is a simple packages manager
+* View [demo](https://powerlean.top/poco)
 * View my [blog](https://powerlean.top)
 * If you want to reference my code,please access my [repository](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco)
 
