@@ -1,6 +1,6 @@
 [Engllish user please click here](https://github.com/EdgeS5352/Power-Collector/blob/master/README.md)
 
-![](https://powerlean.gitee.io/images/QQ%E5%9B%BE%E7%89%8720200816120219.jpg)
+![](https://ae01.alicdn.com/kf/Hec54846cf57c4cbfa0bff6cae6090ff1E.jpg)
 
 #### Power Collector是一个结构简单，易操作的类包管理器
 * 访问我的[博客](https://powerlean.top)
