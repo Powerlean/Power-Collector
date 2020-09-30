@@ -79,7 +79,4 @@ If the program don't need any dependency,then we need do such this:
 
 *You must creates such this file for your all programs.*
 
-
-**Now action!**
-
 ### The end.
