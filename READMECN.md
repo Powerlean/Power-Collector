@@ -3,12 +3,12 @@
 ![](https://ae01.alicdn.com/kf/Hec54846cf57c4cbfa0bff6cae6090ff1E.jpg)
 
 #### Power Collector是一个结构简单，易操作的类包管理器
-* 访问[预览页面](https://powerlean.top/poco-cn)
-* 访问我的[博客](https://powerlean.top)
+* 访问[预览页面](https://www.powerlean.top/poco-cn)
+* 访问我的[博客](https://www.powerlean.top)
 * 若要参考代码及原理，请移步至我的[网站资料库](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco)
 
 ## 🏁快速开始
-`curl -s powerlean.top/blob/poco.setup | bash`
+`curl -s www.powerlean.top/blob/poco.setup | bash`
 
 ### 📋Usage：poco [命令] [参数] [后缀]
 命令:
