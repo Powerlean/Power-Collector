@@ -13,7 +13,7 @@
 ### 📋Usage：poco [command] [argument] [suffix]
 Command:
 - help         **Get help with poco**
-- install     **Get a specified file**
+- fetch     **Get a specified file**
 - list        **List all files which can be download**
 - remove      **Delete a specified file**
 - search      **Search the software description**
