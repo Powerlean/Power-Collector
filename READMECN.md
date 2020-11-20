@@ -13,18 +13,18 @@
 ### 📋Usage：poco [命令] [参数] [后缀]
 命令:
 - help        查询有效参数
-- install     从目标地址获取指定文件
+- fetch       垂直的从目标地址获取指定文件
 - list        列出所有可供下载的文件
 - remove      删除指定的可执行文件
 - search      查找指定文件的描述
-
+- install     解包安装
 后缀:
 - -y          跳过确认环节
 - -s          静默模式，不产生输出
 
-###  组成结构
+###  构成
 
-|  poco的组成部分   | 作用 |
+|  组成部分   | 应用 |
 |  ----  | ------------------------------ |
 | [poco](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco)  | Power Collector的主体部分 |
 | [poco.setup](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.setup) | 安装脚本，运行安装更新等操作 |
@@ -33,11 +33,11 @@
 | [poco.note](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.note) | 更新日志，声明更新内容 |
 | [poco-rescue](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco-rescue) | 修复文件，替换损坏的文件主体|
 | [poco.conf](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.conf) | 控制文件，存放指向路径|
-
+| [poco-remove](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco-remove) | 移除poco及其所有缓存文件|
 
 ### 部署可用下载源
 
-**Power Collector**原理简单，部署下载源也非常容易，只需要一个有效网站便可部署。
+得益于**Power Collector**极简的原理，部署软件源非常容易，只需一个站点。
 
 **你需要在网站的根目录`/`下创建两个目录:**
 
