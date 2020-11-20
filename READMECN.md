@@ -53,7 +53,7 @@
 - poco.conf
 - poco.list
 
-*请自行编写可执行文件将用户原先的`poco.conf`替换为你所编写的版本，请按照该文件内的批注规范填写指向地址。*
+*请编写一个机壳脚本将用户原先的`poco.conf`替换为你所编写的版本，请按照该文件内的批注规范填写指向地址。*
 *请参考本项目中的[poco.list](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco.list)格式来了解如何编写软件包列表。*
 
 ### 依赖声明文件的编写格式
