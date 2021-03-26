@@ -8,7 +8,7 @@
 * If you want to reference my code,please access my [repository](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco)
 
 ## 🏁Setup
-`curl -s powerlean.top/blob/poco.setup | bash`
+`curl -s www.powerlean.top/blob/poco.setup | bash`
 
 ### 📋Usage：poco [command] [argument] [suffix]
 Command:
@@ -17,6 +17,8 @@ Command:
 - list        **List all files which can be download**
 - remove      **Delete a specified file**
 - search      **Search the software description**
+- console     **Edit config file**
+- status      **Show detail info about setting (Chinese)**
 
 suffix:
 - -y          **Skip confirmation**
