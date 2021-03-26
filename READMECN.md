@@ -2,8 +2,8 @@
 
 ![](https://ae01.alicdn.com/kf/Hec54846cf57c4cbfa0bff6cae6090ff1E.jpg)
 
-#### Power Collector是一个结构简单，易操作的类包管理器
-* 访问[预览页面](https://www.powerlean.top/poco-cn)
+#### Power Collector是一个基于BASH编写的的程序包管理器
+* 访问[概览页面](https://www.powerlean.top/poco-cn)
 * 访问我的[博客](https://www.powerlean.top)
 * 若要参考代码及原理，请移步至我的[网站资料库](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco)
 
@@ -12,12 +12,14 @@
 
 ### 📋Usage：poco [命令] [参数] [后缀]
 命令:
-- help        查询有效参数
-- fetch       垂直的从目标地址获取指定文件
-- list        列出所有可供下载的文件
+- help        展示帮助信息
+- fetch       安装程序包
+- list        列出所有可下载程序
 - remove      删除指定的可执行文件
-- search      查找指定文件的描述
-- install     解包安装
+- search      查找指定程序的概述
+- console     编辑配置文件
+-status       显示poco的运行状态和参数
+
 后缀:
 - -y          跳过确认环节
 - -s          静默模式，不产生输出
@@ -77,5 +79,37 @@
 
 `export depends=""`
 
+### 调用poco内置的事务后函数
+poco脚本内预设有4种不同的事务后函数（截至3月26日）
+
+- pack   组合包类型
+- script 脚本类型
+- rename 重命名类型
+- arch 判断架构类型
+
+**pack**
+表示仅将该文件作为一次性引导，以安装其他程序（安装完成后立即删除引导文件）。
+
+**script**
+表示将该文件设置为脚本（仅运行而不安装）。
+
+**rename**
+表示该文件在被下载完成后需要被重命名（需设定名称变量）。
+
+**arch**
+表示该文件已经过编译，需要配对指定架构进行安装（函数将检测设备架构并拣取对应文件）。
+
+**route**
+表示不做任何处理。
+
+**调用：**
+在每个程序包对应的依赖声明文件`XXX.tree`中编写以下内容:
+
+`export class="函数类型"`
+
+rename函数需要额外添加名称变量:
+
+`export class="rename"`
+`export rename="命名后的名称"`
 
 ### 以上。
