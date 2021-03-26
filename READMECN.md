@@ -18,7 +18,7 @@
 - remove      删除指定的可执行文件
 - search      查找指定程序的概述
 - console     编辑配置文件
--status       显示poco的运行状态和参数
+- status       显示poco的运行状态和参数
 
 后缀:
 - -y          跳过确认环节
