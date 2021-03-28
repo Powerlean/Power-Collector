@@ -1,0 +1,1250 @@
+#!/bin/bash
+#Website: https://www.powerlean.top/poco
+#GitHub: https://github.com/edges5352
+#Since:Sat May 16 13:41:55 2020
+#Owner: Powerlean (2021)
+#coding:UTF-8
+
+export version=5.6
+export vibrate="echo -en \007"
+export stop="sleep 0.1"
+export operation="$@"
+export log_file="$PREFIX/etc/poco/poco.log"
+export etc="$PREFIX/etc/"
+export data_file="$PREFIX/etc/poco/poco.data"
+export reles_file="$PREFIX/etc/poco/poco.reles"
+export init_file="$PREFIX/etc/poco/poco.init"
+export cache="${etc}poco/cache"
+export cache_file="${etc}poco/poco.cache"
+export download_file="${etc}poco/poco.download"
+export input_1="$1"
+export input_2="$2"
+export input_3="$3"
+
+#ASCII#
+export red="\033[31m"
+export green="\033[32m"
+export done="\033[0m"
+export inter="inter"
+
+#架构检测
+ARCH() {
+arch=$(uname -m)
+if [[ "$arch" == aarch* || "$arch" == arm* ]]; then
+  arch="arm"
+elif [[ "$arch" == x86* || "$arch" == i* ]]; then
+  arch="i386"
+fi
+}
+
+inter() {
+ ls /dev/null>/dev/null
+ screen="$COLUMNS"
+ yes "-" | sed ''$screen''q | tr -d '\n'
+}
+
+footer() {
+  ls /dev/null>/dev/null
+  screen="$COLUMNS"
+  yes "=" | sed ''$screen''q | tr -d '\n'
+}
+
+center() {
+ls /dev/null>/dev/null
+width="$COLUMNS"
+len=${#line}
+let w=(${width}-${len})/2
+i=16
+while [ ${i} -lt $w ]
+do
+  let i++
+  printf " "
+done
+echo -e "$1"
+}
+
+#首次启动项
+if [ -f "$init_file" ]; then
+    bash ${init_file}
+fi
+
+if [ ! -f "$cache_file" ]; then
+  touch $cache_file
+fi
+
+get_now_timestamp() {
+  cur_sec_and_ns=`date '+%s-%N'`
+  echo ${cur_sec_and_ns%-*}
+}
+
+end_now_timestamp() {
+end=`get_now_timestamp`
+second=`expr ${end} - ${begin}`
+  reset=`expr ${second} / 1`
+  unit_time="s"
+if [[ "$second" -ge "3600" ]]; then
+   reset=`expr ${second} / 3600`
+   unit_time="h"
+elif [[ "$second" -ge "60" ]]; then
+  if [[ "$second" -lt "3600" ]]; then
+    reset=`expr ${second} / 60`
+    unit_time="m"
+  fi
+fi
+echo "${cur_time}${reset}${unit_time}"
+}
+
+DONE() {
+  ${done_tip}
+  ${vibrate}
+}
+
+RESCUE() {
+  echo -e "${yellow}START AUTO-RECUSE${done}"
+  export mode="update"
+  curl -s www.powerlean.top/blob/poco.setup | bash
+  echo -e "${yellow}DONE${done}"
+  inter
+  center "${green}ERROR DETAILS | 我们发现了以下错误${done}"
+  ${@}
+  inter
+}
+
+WHICH() {
+for PROGRAM in "${1}"; do
+ RET=1
+ IFS_SAVE="$IFS"
+ IFS=:
+ case $PROGRAM in
+  */*)
+   if [ -f "$PROGRAM" ] && [ -x "$PROGRAM" ]; then
+    echo "$PROGRAM"
+    RET=0
+   fi
+   ;;
+  *)
+   for ELEMENT in $PATH; do
+    if [ -z "$ELEMENT" ]; then
+     ELEMENT=.
+    fi
+    if [ -f "$ELEMENT/$PROGRAM" ] && [ -x "$ELEMENT/$PROGRAM" ]; then
+     echo "$ELEMENT/$PROGRAM"
+     RET=0
+     [[ "$ALLMATCHES" -eq 1 ]] || break
+    fi
+   done
+   ;;
+ esac
+ IFS="$IFS_SAVE"
+ if [ "$RET" -ne 0 ]; then
+  ALLRET=1
+ fi
+done
+}
+
+VIBRATE_DONE() {
+loop=1
+while [ $loop -lt 4 ]; do
+    $vibrate
+    $stop
+    loop=$(($loop+1))
+done
+end_now_timestamp
+}
+
+VIBRATE_ERROR() {
+loop=1
+while [ $loop -lt 3 ]; do
+    $vibrate
+    $stop
+    loop=$(($loop+1))
+done
+end_now_timestamp
+}
+
+DEPENDS_INSTALL() {
+ eval "$(curl -s ${site}${tree}${1}.tree)" #生成输出变量
+for i in $depends
+do
+   if [ ! -f $bin/$i ]; then #递归实现遍历以检查依赖
+     poco fetch $i -s
+   fi
+done     
+}
+
+test_sudo=$(WHICH sudo)
+if [ not"$test_sudo" != "not" ]; then
+  if [ $USER != "root" ]; then
+      bash -c "echo ''> $PREFIX/etc/poco/cache" 1>/dev/null 2>&1
+      return=$?
+      if [ $return != 0 ]; then
+      echo -e "${red}E:${done} Unable to acquire the cache file,are you root?"
+      echo -e "Run the follow command to solve this problem:"
+      echo ""
+      echo -e "\033[27;37;1msudo poco ${@}\033[0m"
+      echo ""
+      exit 2
+      fi
+   fi
+ fi
+
+#故障检修
+fix=AUTO_FIX
+AUTO_FIX() {
+TEST=$(poco return 1>/dev/null 2>&1;echo $?)
+if [ "$TEST" -ne "0" ]; then
+  RESCUE
+fi
+}
+if [ "$fix_status" == "done" ]; then
+  unset fix
+fi
+export fix_status="done"
+${fix}
+
+DEPENDS() {
+${check_depends} #提示语
+progress
+try=$(curl -I -m 10 -o /dev/null -s -w %{http_code} ${site}${tree}${1}.tree) #调取HTTP代码
+ ${done_tip}
+ if [ "$try" -ne "200" ]; then
+  ${depends_error}
+  VIBRATE_ERROR
+  exit 2
+fi
+eval "$(curl -s ${site}${tree}${1}.tree)" #生成输出变量
+for i in $depends
+do
+   if [ ! -f $bin/$i ]; then #遍历检查依赖
+     echo -e "${depends_loaded}${yellow}${i}${done}" #提示语
+     poco fetch $i -s
+   fi
+done
+${try_class}
+case $class in
+      "pack")
+        echo "pack"
+        rm -rf "${bin}/${1}"
+    ;;
+      "script")
+        echo "script"
+        ${1}
+        rm -rf "${bin}/${1}"
+        exit 0
+     ;;
+     "rename")
+       echo "rename"
+       mv ${bin}/${1} ${bin}/${rename}
+     ;;
+      "arch")
+       ARCH
+       echo "architecture transform"
+       rm -rf ${bin}/${input_2}
+       echo -e "${arch_loaded}${yellow}${input_2}-${arch}${done}" #提示语
+       poco fetch ${input_2}-${arch} -s
+     ;;
+        *)
+        echo "route"
+esac
+        ${done_download}
+     ${depends_done} #提示语
+     ${vibrate} #震动一次
+}
+
+DEPENDS_SILENT() {
+ try=$(curl -I -m 10 -o /dev/null -s -w %{http_code} ${site}${tree}${1}.tree)
+ if [ "$try" -ne "200" ]; then
+   VIBRATE_ERROR
+   exit 2
+ fi
+ eval "$(curl -s ${site}${tree}${1}.tree)" #生成输出变量
+for i in $depends
+do
+   if [ ! -f $bin/$i ]; then #遍历检查依赖
+     poco fetch $i -s
+   fi
+done
+case $class in
+      "pack")
+        rm -rf "${bin}/${1}"
+    ;;
+      "script")
+        ${1}
+        rm -rf "${bin}/${1}"
+        exit 0
+     ;;
+     "rename")
+       mv ${bin}/${1} ${bin}/${rename}
+     ;;
+      "arch")
+       ARCH
+       rm -rf ${bin}/${input_2}
+       echo -e "${depends_loaded}${yellow}${input_2}-${arch}${done}" #提示语
+       poco fetch ${input_2}-${arch} -s
+esac
+}
+
+CHECK_UPDATE() {
+lastest=$(curl -s $site/$blob/poco | sed '/^export version=/!d;s/.*=//')
+if [ "$version" == "$lastest" ]; then
+  ${done_tip}
+elif [ not"$lastest" == "not" ]; then
+    echo "" 
+    ${firewall_fail}
+    exit 2
+else
+  ${force_update}
+  export mode="update"
+  curl -s www.powerlean.top/blob/poco.setup | bash
+  ${vibrate}
+  function progress_strong {
+  point="echo -e -n ${green} .${done}"
+  sec="0.5"
+  loop=1
+while [ $loop -lt 15 ]; do
+    sleep $sec
+    $point
+    loop=$(($loop+1))
+done
+  echo " ."
+  sleep 5
+}
+  clear
+  ${update_note}
+  curl -s www.powerlean.top/blob/poco.note
+  progress_strong
+  $vibrate;$vibrate;$vibrate
+  clear
+  export status="complete"
+fi
+}
+
+DEPENDS_REMOVE() {
+${check_depends} #提示语
+progress
+try=$(curl -I -m 10 -o /dev/null -s -w %{http_code} ${site}${blob}${range})
+if [ "$try" -ne "200" ]; then
+  ${group_done}
+  exit 0
+fi
+eval "$(curl -s ${site}${tree}${range}.tree)" #生成输出变量
+for i in $depends
+do
+   if [ -f $bin/$i ]; then #递归检查依赖
+     poco remove $i
+     ${vibrate} #震动一次
+   else
+      ${group_done}
+      exit 0
+   fi
+done
+}
+
+if [ ! -f "$PREFIX/etc/poco/poco.conf" ]; then
+  echo -e "${red}ERROR:File $PREFIX/etc/poco/poco.conf does not exist${done}"
+  RESCUE
+fi
+
+if [ ! -f "${download_file}" ]; then
+  touch ${download_file}
+fi
+
+#导入config数据#
+export config_file="$PREFIX/etc/poco/poco.conf" #配置文件路径
+export list_url=`sed '/^listURL: /!d;s/.*: //' $config_file` #列表链接
+export site=`sed '/^URL: /!d;s/.*: //' $config_file` #源网址
+export bin=`WHICH bash| sed 's/bash//g'` #指定搜索文件
+export blob=`sed '/^blob: /!d;s/.*: //' $config_file` #文件存储链接
+export tree=`sed '/^tree: /!d;s/.*: //' $config_file` #依赖文件存放链接
+export language=`sed '/^LANG: /!d;s/.*: //' $config_file` #语言设定
+export development_mode=`sed '/^Development Mode: /!d;s/.*: //' $config_file` #开发模式
+export setup="mv ${2} ${bin}" #执行安装
+export output="/dev/null" #输出路径
+export last_time=`sed '/^Time=/!d;s/.*=//' $cache_file` #时间记录
+export last_op=`sed '/^Op=/!d;s/.*=//' $cache_file` #操作缓存
+export status=`sed '/^Status=/!d;s/.*=//' $cache_file` #状态缓存
+export yellow=$(sed '/^Highlight: /!d;s/.*: //' $config_file) #自定义配色
+export random=$(sed '/^Random: /!d;s/.*: //' $config_file) #随机配色
+if [ not"$yellow" == "not" ]; then
+  export yellow="\033[33m"
+fi
+random_ifs=$(echo "${random}" | tr [a-z] [A-Z])
+if [ "$random_ifs" == "TRUE" ]; then
+  rancode=$((RANDOM %10))
+  export yellow="\033[3${rancode}m"
+fi
+
+#中断处理#
+CONFIGURE() {
+if [ not"$status" =="not" ]; then
+  if [ not"$last_op" =="not" ]; then
+    status="done"
+  else
+    ${configure}
+    exit 2
+  fi
+fi
+}
+
+#毫无作用的乐色#
+function progress {
+for i in {0..2};
+do
+  for i in {0..3};
+  do
+    sleep 0.2
+    echo -en "."
+  done
+  echo -en "\b\b\b   \b\b\b"
+done
+}
+
+#字符变量#
+#中文
+export remove_confirm_cn="echo -e 若存在，则以下程序将被移除："
+export try_class_cn="echo -n 自动读取课别："
+export cur_time_cn="总计共运行"
+export second_time_cn="秒"
+export check_database_cn="echo -n 覆盖本地缓存数据"
+export file_exist_cn="echo -e ${yellow}警告：${done}目标文件已经存在"
+export null_search_cn="echo -e ${yellow}未搜索到可匹配内容${done}"
+export bad_suffix_cn="echo -e ${red}无效操作：未定义的后缀,或许您输入了多个文件名${done}"
+export error_remove_cn="echo -e ${red}无效操作 ${choice}${done}"
+export remove_cn="您希望继续【移除】吗？"
+export void_cn="echo -e ${red}无效操作 ${1}${done}"
+export search_cn="echo -n -e  向${yellow}${site}${blob}${2}${done}核对报头"
+export void_found_cn="echo -e ${red}无法引导至对应程序 ${2}${done}"
+export try_download_cn="echo -e 一切就绪，尝试载入文件"
+export file_fail_cn="echo -e ${red}获取失败:文件${yellow}${2}${done}不存在或因目标停止传输${done}"
+export firewall_fail_cn="echo -e ${red}获取失败:请检索网络或防火墙设置${done}"
+export done_download_cn="echo -e 文件${yellow}${2}${done}获取完成"
+export unknow_cn="echo -e 出现不明原因错误，若您觉得这个问题不该出现，请将其反馈至${yellow}https://www.powerlean.top/issues${done}"
+export hook_cn="echo -n 正在释放资源"
+export done_setup_cn="echo -e ${yellow}${2}${done}设定完成"
+export error_found_cn="echo -e ${red}无法移除${2}：文件或目录不存在${done}"
+export install_info_cn="从目标地址获取指定解压包"
+export remove_info_cn="删除指定的可执行文件"
+export help_info_cn="查询有效参数"
+export intro_info_cn="POWER COLLECTOR是一个基于BASH编写的程序包管理器"
+export not_input_cn="echo -e ${red}请指定一个目标文件${done}"
+export come_cn="来自"
+export size_cn="总计大小："
+export install_tip_cn="您希望继续"
+export ask_cn="吗"
+export error_get_cn="echo -e ${red}无效操作 ${choice}${done}"
+export unit_cn="字符"
+export list_info_cn="检视可被安装的程序包"
+export request_cn="正在从远端拉取请求"
+export force_update_cn="echo -e ${red}正在进行版本升级,请勿终止程序${done}"
+export check_version_cn="echo -n 检视版本信息"
+export check_file_cn="echo -n 校验程序完整性"
+export re_install_cn="echo -e ${red}您的程序与上游版本不符，将运行覆盖函数来更新${done}"
+export suffix_cn="选项"
+export y_info_cn="跳过确认环节"
+export s_info_cn="静默模式"
+export size_info_cn="总计下载"
+export abort_cn="echo -e 终止"
+export res_cn="echo -e 搜索结果："
+export update_note_cn="echo -e \033[41;37m 更新日志 \033[0m"
+export search_info_cn="基于名称检索程序包信息"
+export check_depends_cn="echo -n 正在校验树状依赖"
+export depends_loaded_cn="自动选定依赖"
+export depends_done_cn="echo 所有依赖均已加入哈希表"
+export site_warn_cn="echo ${red}请谨慎不明身份的网站${done}"
+export depends_error_cn="echo -e ${red}${2}的依赖项无法被满足${done}"
+export group_info_cn="指定并运行引导脚本"
+export void_group_cn="echo -e 所选中${yellow}${2}${done}不是group引导文件，但您可以使用${yellow}poco install ${2}${done}来将其安装"
+export group_install_cn="echo -n 拉取所选中的group引导"
+export group_done_cn="echo 子进程结束"
+export file_remove_cn="所选中${yellow}${i}${done}将被移除"
+export files_cn="所选中"
+export remove_tip_cn="将被移除"
+export done_tip_cn="echo -e 完成"
+export ERROR_cn="误差"
+export OK_cn="正常"
+export history_info_cn="检索使用记录"
+export not_intro_cn="无描述"
+export fetch_info_cn="安装程序包"
+export exist_database_cn="echo -e ${yellow}${2}${done}的最新版本已经存在，将不会被再次安装"
+export reles_version_cn="echo -n 核验版本序数"
+export last_update_cn="echo -e 最后一次更新于${last_time}"
+export configure_cn="echo -e poco进程被中断，您必须手动执行${yellow}poco configure${done}来回覆进程"
+export pull_cn="echo -n 从源文件拉取最新信息"
+export install_cn="【安装】"
+export upgrade_cn="【升级】"
+export usage_cn="用法"
+export description_cn="关于"
+export command_cn="命令"
+export arguments_cn="参数"
+export arch_loaded_cn="修正架构类型并选定"
+export select_editor_cn="选择一个文本编辑器"
+export choose_one_cn="输入【1-3】以选择："
+export update_conf_cn="更新配置信息"
+export console_info_cn="编辑配置文件"
+export status_info_cn="显示配置信息"
+
+#English
+export status_info="Show configuration info"
+export console_info="Edit configuration file"
+export update_conf="Updating configuration info"
+export choose_one="Keyin [1-3] to select:"
+export select_editor="Choose an editor"
+export remove_confirm="echo -e If existed,the follow files will be remove:"
+export try_class="echo -n Auto acquire file's class:"
+export arguments="arguments"
+export command="COMMANDS"
+export usage="USAGE"
+export description="DESCRIPTION"
+export pull="echo -n Pulling lastest info from source link"
+export configure="echo -e poco was interrupt,please run ${yellow}poco configure${done}to rollback."
+export last_update="echo -e Lastest update at ${last_time}"
+export cur_time="Progress total run time: "
+export second_time=" seconds"
+export reles_version="echo -n Inspecting native release"
+export check_database="echo -n Checking the version of database"
+export fetch_info="Fetch packages and run preset function"
+export file_exist="echo -e ${yellow}Warning:${done}target file is already exist"
+export done_tip="echo -e Done"
+export file_remove="echo -e File ${yellow}${i}${done} will be remove"
+export group_install="echo -n Pulling the group index file"
+export void_group="echo -e ${yellow}${2}${done} is not a group index file,but can be installed with ${yellow}poco install ${2}"
+export install_tip="Do you want to "
+export come="From"
+export void="echo -e ${red}Invalid operation ${1}${done}"
+export search="echo -n -e  Waiting for response:${yellow}${site}${blob}${2}${done}"
+export void_found="echo -e ${red}Unable to navigate package ${2}${done}"
+export try_download="echo -e Operation finished，loading info"
+export file_fail="echo -e ${red}Something error:file${yellow}${2}${done} is not exist or progress interruption${done}"
+export firewall_fail="echo -e ${red}Something error:please check your network or firewall settings${done}"
+export done_download="echo -e File ${yellow}${2}${done} was downloaded"
+export unknow="echo -e Something wrong,if you think it is a problem,please send feedback to ${yellow}https://www.powerlean.top/issues${done}"
+export hook="echo -ne Setting up ${yellow}${2}${done}"
+export done_setup="echo -e ${yellow}${2}${done} is already set done"
+export remove="Do you want to [remove]?"
+export error_remove="echo -e ${red}Invalid operation ${choice}${done}"
+export error_found="echo -e ${red}cannot remove $2: No such file or directory${done}"
+export install_info="Install packages"
+export remove_info="Remove packages"
+export help_info="Show help information"
+export intro_info="POWER COLLECTOR is a package manager base on BASH"
+export not_input="echo -e ${red}Please specify a package${done}"
+export size="Total Size:"
+export error_get="echo -e ${red}Invalid operation ${choice}${done}"
+export unit=" chars"
+export list_info="List packages available on repository"
+export request="To remote:Pulling request"
+export force_update="echo -e ${yellow}You are below the latest version,update will soon be started${done}"
+export bad_suffix="echo -e ${red}Invalid operation，do not enter multiple file names${done}"
+export check_version="echo -n Checking version information"
+export check_file="echo -n Checking program integrity"
+export re_install="echo -e ${red}Your program is incomplete,being repaired${done}"
+export suffix="OPTIONS"
+export y_info="Skip confirmation"
+export s_info="Silent mode"
+export size_info="Total downloaded "
+export abort="echo -e Abort"
+export res="echo -e Search results:"
+export update_note="echo -e \033[41;37m  Release Note \033[0m"
+export search_info="Search in package descriptions"
+export check_depends="echo -n Building dependency tree"
+export depends_loaded="Auto-selected package "
+export depends_done="echo Dependencies were built done"
+export site_warn="echo ${red}Unofficial websites can be dangerous${done}"
+export depends_error="echo -e ${red}${2}'s dependencies cannot be met${done}"
+export null_search="echo -e ${yellow}NULL${done}"
+export group_info="Custom installation"
+export group_done="echo Process done"
+export files="File "
+export remove_tip=" will be removed"
+export ERROR="ERROR"
+export OK="OK"
+export history_info="Search records"
+export not_intro="No description"
+export exist_database="echo -e ${yellow}${2}${done} is already exist,it will not be installed"
+export install="[Install]"
+export upgrade="[Upgrade]"
+export arch_loaded="$depends_loaded"
+
+#语言设定
+#LANG="zh_CN.UTF-8" #取消该注释将程序设定为中文(在句尾另添一个"#")
+if [ "$language" == EN ]; then
+  export LANG="en.UTF-8"
+fi
+if [[ "$LANG" == zh_*.UTF-8 || "$language" == CN ]]; then
+  export console_info=$console_info_cn
+  export status_info=$status_info_cn
+  export update_conf=$update_conf_cn
+  export choose_one=$choose_one_cn
+  export select_editor=$select_editor_cn
+  export arch_loaded=$arch_loaded_cn
+  export remove_confirm=$remove_confirm_cn
+  export try_class=$try_class_cn
+  export arguments=$arguments_cn
+  export command=$command_cn
+  export description=$description_cn
+  export usage=$usage_cn
+  export upgrade=$upgrade_cn
+  export ask=$ask_cn
+  export install=$install_cn
+  export pull=$pull_cn
+  export configure=$configure_cn
+  export last_update=$last_update_cn
+  export cur_time=$cur_time_cn
+  export second_time=$second_time_cn
+  export reles_version=$reles_version_cn
+  export check_database=$check_database_cn
+  export fetch_info=$fetch_info_cn
+  export not_intro=$not_intro_cn
+  export history_info=$history_info_cn
+  export OK=$OK_cn
+  export ERROR=$ERROR_cn
+  export file_exist=$file_exist_cn
+  export done_tip=$done_tip_cn
+  export group_info=$group_info_cn
+  export void_group=$void_group_cn
+  export bad_suffix=$bad_suffix_cn
+  export list_info=$list_info_cn
+  export unit=$unit_cn
+  export size=$size_cn
+  export install_tip=$install_tip_cn
+  export come=$come_cn
+  export intro_info=$intro_info_cn
+  export error_found=$error_found_cn
+  export void=$void_cn
+  export search=$search_cn
+  export void_found=$void_found_cn
+  export try_download=$try_download_cn
+  export file_fail=$file_fail_cn
+  export firewall_fail=$firewall_fail_cn
+  export done_download=$done_download_cn
+  export unknow=$unknow_cn
+  export hook=$hook_cn
+  export done_setup=$done_setup_cn
+  export remove=$remove_cn
+  export error_remove=$error_remove_cn
+  export install_info=$install_info_cn
+  export remove_info=$remove_info_cn
+  export help_info=$help_info_cn
+  export not_input=$not_input_cn
+  export error_get=$error_get_cn
+  export request=$request_cn
+  export force_update=$force_update_cn
+  export check_version=$check_version_cn
+  export check_file=$check_file_cn
+  export re_install=$re_install_cn
+  export suffix=$suffix_cn
+  export y_info=$y_info_cn
+  export s_info=$s_info_cn
+  export size_info=$size_info_cn
+  export abort=$abort_cn
+  export res=$res_cn
+  export update_note=$update_note_cn
+  export search_info=$search_info_cn
+  export check_depends=$check_depends_cn
+  export depends_loaded=$depends_loaded_cn
+  export depends_done=$depends_done_cn
+  export site_warn=$site_warn_cn
+  export depends_error=$depends_error_cn
+  export null_search=$null_search_cn
+  export  group_install=$group_install_cn
+  export group_done=$group_done_cn
+  export file_remove=$file_remove_cn
+  export remove_tip=$remove_tip_cn
+  export files=$files_cn
+  export exist_database=$exist_database_cn
+fi
+
+if [ not"$last_time" == "not" ]; then
+  unset last_update
+fi
+
+#移除光标
+echo -ne "\033[?25l"
+
+#主体(一扇区) FETCH
+if [ "$1" == "fetch" -o "$1" == "f" ]; then #因玄学问题取消一元运算符
+  begin=`get_now_timestamp`
+  if [ "$3" == "-s" ]; then #静默模式
+    try=$(curl -I -m 10 -o /dev/null -s -w %{http_code} ${site}${blob}${2})
+    if [ "$try" -ne "200" ]; then
+      VIBRATE_ERROR
+      exit 2
+    else
+      curl -#OL ${site}$blob/$2
+      echo "$2" >>${download_file}
+      ${setup}
+      chmod +x $bin/$2
+       DEPENDS_SILENT ${2}
+      exit 0
+    fi
+  fi
+  if [ not"$2" == "not" ]; then
+    ${not_input}
+    VIBRATE_ERROR
+    exit 2
+  fi
+  
+  #显示模式
+  if [ "$3" == "-y" -o "$3" == "-Y" ]; then
+    unset inter #解除分隔符
+  fi
+  $last_update
+  ${check_version}
+  progress
+  #写入缓存
+  DATE=$(date)
+  echo "Time=${DATE}">${cache_file}
+  CHECK_UPDATE
+  ${vibrate}
+   
+   CHECK_FILE() {
+   ${check_file}
+   progress
+   curl -s ${site}$blob/poco>${cache}
+   local=${bin}/poco
+   diff ${cache} ${local}>/dev/null
+   export diff_reslut=$?
+   ${done_tip}
+   if [ "$diff_reslut" != "0" ]; then
+     ${re_install}
+     VIBRATE_ERROR
+     export mode="update" #输出模式
+     curl -s ${site}$blob/poco.setup | bash
+   fi
+   ${vibrate}
+   }
+   
+   #若版本更新被触发，则跳过文件校验
+ check_status="CHECK_FILE"
+ development_mode_ifs=$(echo "${development_mode}" | tr [a-z] [A-Z])
+ if [ "$status" == "complete" -o "$development_mode_ifs" == "TRUE" ]; then
+  unset check_status
+ fi
+  
+   #文件校验环节
+  ${check_status}
+  ${search}
+  progress
+  try=$(curl -I -m 10 -o /dev/null -s -w %{http_code} ${site}${blob}${2})
+  if [ "$try" -ne "200" ]; then
+    echo -e "${red}${try}[${ERROR}]${done}"
+    ${void_found}
+    VIBRATE_ERROR
+    echo -ne "\033[?25h" #显示光标
+    exit 2
+  else
+    echo "Op=${@}">>${cache_file} #写入操作
+    echo -e "${green}${try}[${OK}]${done}"
+    ${vibrate}
+    fetch_status="${install}"
+    if [ -f "$bin/$2" ]; then #等待插入一个新的算法，请在Issues中提出建议
+      ${pull}
+      progress
+      curl -s ${site}${blob}${2}>${cache}
+      diff ${cache} ${bin}/${2}>/dev/null
+      export diff_reslut=$?
+      ${done_tip}
+      ${vibrate}
+      if [ "$diff_reslut" == "0" ]; then
+        ${exist_database}
+        echo "">${cache} #清除缓存
+        echo -ne "\033[?25h" #显示光标
+        exit 0
+      fi
+      fetch_status="${upgrade}"
+    fi
+    ${try_download}
+    if [ "$3" == "-y" -o "$3" == "-Y" ]; then #跳过确认环节
+       curl -#OL ${site}/$blob/$2
+       echo "$2" >>${download_file}
+       ${vibrate}
+    elif [ not"$3" == "not" ]; then
+    INTRO=$(curl -s ${site}/${blob}/poco.list | sed '/^'"$2"' *-/!d;s/.*- //')
+    if [ not"$INTRO" == "not" ]; then
+      export INTRO="$not_intro"
+    fi
+     view_size=`ls -sh ${cache}` #统计文件大小
+     DATE=$(date)
+     footer
+     center "${DATE}"
+     center "${2} ${size}${view_size%%/*}"
+     footer
+     echo " "
+     center "${INTRO}"
+     echo " "
+     center "${come}:${yellow}${site}${blob}${2}${done}"
+     echo " "
+     footer
+     ${vibrate}
+     read -n1 -p "${install_tip}${fetch_status}${ask}? [Y/n]: " choice
+        if [ "$choice" == "y" -o "$choice" == "Y" ]; then
+          echo ""
+          curl -#OL ${site}$blob/$2
+          echo "$2" >>${download_file}
+        elif [ "$choice" == "n" -o "$choice" == "N" ]; then
+          echo ""
+          ${abort}
+          VIBRATE_DONE
+          echo "Status=done">>${cache_file} #写入状态
+          echo "">${cache} #清除缓存
+          echo -ne "\033[?25h" #显示光标
+          exit 0
+        else
+          ${error_get}
+          VIBRATE_ERROR
+          exit 1
+        fi
+    else
+      ${bad_suffix}
+      VIBRATE_ERROR
+      exit 2
+    fi
+    case $? in
+      "8")
+        ${file_fail}
+        exit 2
+    ;;
+      "4")
+        ${firewall_fail}
+        exit 3
+    ;;
+      "0")
+        ${done_download}
+    ;;
+        *)
+        ${unknow}
+        exit 1
+    esac
+  download_size=`ls -sh ${2} | sed "s/ ${2}//g"` #统计文件大小
+  echo -e "${size_info}${yellow}$download_size${done}"
+  ${vibrate}
+  ${hook}
+  progress
+  ${setup}
+  chmod +x $bin/$2
+  ${done_tip}
+  ${inter}
+  DEPENDS ${2}
+  ${inter}
+  ${done_setup}
+  VIBRATE_DONE
+fi 
+
+#主体(二扇区) REMOVE
+elif [ "$1" == "remove" ]; then
+  begin=`get_now_timestamp`
+  if [ not"$2" == "not" ]; then
+    ${not_input}
+    exit 2
+  fi
+  echo "Op=${@}">>${cache_file} #写入操作
+  export all="${@}"
+  go_remove="REMOVE_CONFIRM"
+  REMOVE_CONFIRM() {
+   ${remove_confirm}
+   ${inter}
+   out=$(echo "${all#*remove}"|sed 's/ /,/g')
+   center ${out#,}
+   ${inter}
+   read -n1 -p "${remove} [Y/n]: " choice
+   export choice="${choice}"
+  }
+  if [ "$confirm_status" == "done" ]; then
+    unset go_remove
+  fi
+  export confirm_status="done"
+  ${go_remove}
+  if [ "$choice" == "n" -o "$choice" == "N" ]; then
+    echo"";${abort}
+    exit 0
+  elif [ "$choice" == "y" -o "$choice" == "Y" ]; then
+    echo "";
+  for range in $@
+  do
+  if [ "$range" != "r" -a "$range" != "remove" ]; then
+    if [ -f $bin/$range ]; then
+      echo -e "${files}${yellow}${range}${done}${remove_tip}"
+      rm -rf $bin/$range #因为不明文件属性，故强制递归
+      DEPENDS_REMOVE
+    fi
+  fi
+done
+echo "Status=done">>${cache_file} #写入状态
+VIBRATE_DONE
+fi
+
+#主体(三扇区) LIST
+elif [ "$1" == "list" -o "$1" == "l" ]; then
+  begin=`get_now_timestamp`
+  echo -n "${request}"
+  progress
+  echo ""
+  curl -s ${list_url}
+  VIBRATE_DONE
+
+#主体(四扇区) HELP
+elif [ "$1" == "help" -o "$1" == "h" -o "$1" == "-h" ]; then
+  echo -e "\033[27;37;1m${usage}\033[0m"
+  echo -e "  poco [<${command}>] [${arguments}] [${suffix}]"
+  echo ""
+  echo -e "\033[27;37;1m${description}\033[0m"
+  echo "  ${intro_info}"
+  echo ""
+  echo -e "\033[27;37;1m${command}\033[0m"
+  echo -e "  ${yellow}f${done}etch         ${fetch_info}"
+  echo -e "  ${yellow}remove${done}        ${remove_info}"
+  echo -e "  ${yellow}h${done}elp          ${help_info}"
+  echo -e "  ${yellow}l${done}ist          ${list_info}"
+  echo -e "  ${yellow}s${done}earch        ${search_info}"
+  echo -e "  ${yellow}g${done}roup         ${group_info}"
+  echo -e "  ${yellow}hi${done}story       ${history_info}"
+  echo -e "  ${yellow}s${done}tatus        ${status_info}"
+  echo -e "  ${yellow}c${done}onsole       ${console_info}"
+  
+  echo ""
+  echo -e "\033[27;37;1m${suffix}\033[0m"
+  echo -e "\033[27;37;1m  -y --yes\033[0m"            
+  echo -e "   ${y_info}"
+  echo -e "\033[27;37;1m  -s --silent\033[0m"
+  echo -e "   ${s_info}"
+  echo ""
+  echo -e "\033[27;37;1mPowerCollector@${version}\033[0m ${0}"
+
+#主体(五扇区) SEARCH
+elif [ "$1" == "search" -o "$1" == "s" ]; then
+  if [ not"$2" == "not" ]; then
+    ${not_input}
+    VIBRATE_ERROR
+    exit 2
+  fi
+  result=$(curl -s ${list_url} | awk /$2/)
+  ${res}
+  if [ not"$result" == not ]; then
+    ${null_search}
+    exit 0
+  fi
+  inter
+  echo "${result}"|while read line
+  do
+  echo -e "${yellow}${line}${done}" #遍历显示
+  inter
+  done
+
+#主体(六扇区) GROUP
+elif [ "$1" == "group" -o "$1" == "g" ]; then
+  begin=`get_now_timestamp`
+  if [ not"$2" == "not" ]; then
+    ${not_input}
+    VIBRATE_ERROR
+    exit 2
+  fi
+  ${check_version}
+  progress
+  CHECK_UPDATE
+  ${vibrate}
+   
+   CHECK_FILE() {
+   ${check_file}
+   progress
+   origin=$(curl -s ${site}$blob/poco)
+   local=$(cat $bin/poco)
+   ${done_tip}
+   if [[ "${#origin}" -ne "${#local}" ]]; then
+     ${re_install}
+     VIBRATE_ERROR
+     export mode="update"
+     curl -s ${site}$blob/poco.setup | bash
+   fi
+   ${vibrate}
+   }
+   
+   #若版本更新被触发，则跳过文件校验
+ check_status="CHECK_FILE"
+ if [ "$status" == "complete" ]; then
+  unset check_status
+ fi
+  
+   #文件校验环节
+  ${check_status}
+  ${search}
+  progress
+  try=$(curl -I -m 10 -o /dev/null -s -w %{http_code} ${site}${blob}${2})
+  if [ "$try" -ne "200" ]; then
+    echo -e "${red}${try}[${ERROR}]${done}"
+    ${void_found}
+    VIBRATE_ERROR 
+    exit 2
+  else
+    echo -e "${green}${try}[${OK}]${done}"
+    type=`curl -s ${site}/${blob}/${2} | sed '/^type=/!d;s/.*=//'`
+    if [ "$type" != "group" ]; then
+      ${void_group}
+      VIBRATE_ERROR 
+      exit 2
+    fi
+    echo "Op=${@}">>${cache_file}
+    ${group_install}
+    progress
+    echo ""
+    curl -s ${site}/${blob}/${2} | bash
+     echo "Status=done">>${cache_file}
+    ${vibrate}
+    ${group_done}
+  fi
+    
+#主体(七扇区) TEST_RETURN
+elif [ "$1" == "return" ]; then
+  if [ not"$2" == not ]; then
+    exit 0
+  else
+    exit $2
+  fi    
+
+#主体(八扇区) HISTORY
+elif [ "$1" == "history" -o "$1" == "hi" ]; then
+  if [ ! -f "$log_file" ]; then
+    touch $log_file
+  fi
+  export result=$(cat $log_file | awk /$2/)
+  if [ not"$result" == not ]; then
+    ${null_search}
+  else
+    cat $log_file | awk /$2/
+  fi
+
+#主体(九扇区) INSTALL
+elif [ "$1" == "install" -o "$1" == "i" ]; then
+  begin=`get_now_timestamp`
+  if [ not"$2" == "not" ]; then
+    ${not_input}
+    VIBRATE_ERROR
+    exit 2
+  fi
+  ${check_version}
+  progress
+  CHECK_UPDATE
+  ${vibrate}
+  ${done_tip}
+   
+   CHECK_FILE() {
+   ${check_file}
+   progress
+   origin=$(curl -s ${site}$blob/poco)
+   local=$(cat $bin/poco)
+   DONE
+   if [[ "${#origin}" -ne "${#local}" ]]; then
+     ${re_install}
+     VIBRATE_ERROR
+     export mode="update" #输出模式
+     curl -s ${site}$blob/poco.setup | bash
+   fi
+   ${vibrate}
+   }
+   
+   #若版本更新被触发，则跳过文件校验
+ check_status="CHECK_FILE"
+ development_mode_ifs=$(echo "${development_mode}" | tr [a-z] [A-Z])
+ if [ "$status" == "complete" -o "$development_mode_ifs" == "TRUE" ]; then
+  unset check_status
+ fi
+ ${check_database}
+ progress
+ local=$(cat ${etc}/poco/poco.data)
+ lastest=$(curl -s ${site}/${blob}/poco.data)
+ DONE
+ if [[ "$local" != "$lastest" ]]; then
+   ${update_database}
+   curl -sOL ${site}/${blob}/poco.data
+   mv poco.data "${etc}/poco"
+ fi
+ ${search_database}
+ export result=$(sed '/^'${2}'：/!d;s/.*：//' $data_file)
+ if [ not"$result" == not ]; then
+   ${void_found}
+   VIBRATE_ERROR
+   exit 2
+ fi
+ ${check_status}
+  ${search}
+  progress
+  try=$(curl -I -m 10 -o /dev/null -s -w %{http_code} ${site}${blob}${2})
+  if [ "$try" -ne "200" ]; then
+    echo -e "${red}${try}[${ERROR}]${done}"
+    ${void_found}
+    VIBRATE_ERROR
+    exit 2
+  else
+    echo -e "${green}${try}[${OK}]${done}"
+    ${vibrate}
+  fi
+ ${try_download}
+ ${reles_version}
+ progress
+ if [ ! -f "$reles_file" ]; then
+   touch $reles_file
+ fi
+ export local=$(sed '/^"'${2}'@version"：/!d;s/.*：//' $reles_file)
+ export lastest=$(sed '/^"'${2}'@version"：/!d;s/.*：//' $data_file)
+ DONE
+ if [ "$local" == "$lastest" ]; then
+   ${exist_database}
+   VIBRATE_DONE
+   exit 0
+ fi
+ FOOTER() {
+ INTRO=$(curl -s ${site}/${blob}/poco.list | sed '/^'"$2"' *-/!d;s/.*- //')
+    if [ not"$INTRO" == "not" ]; then
+      export INTRO="$not_intro"
+    fi
+     DATE=$(date)
+     ${footer}
+     echo -e "${result}  ${DATE}" #${size}:${#try}${unit}
+     echo " ${INTRO}"
+     echo ""
+     echo -e "${come}:${yellow}${site}${blob}${result}${done}"
+     ${footer}
+     ${vibrate}
+     read -n1 -p "$install [Y/n]: " choice
+        if [ "$choice" == "y" -o "$choice" == "Y" ]; then
+          echo ""
+          curl -#OL ${site}$blob/$result
+        elif [ "$choice" == "n" -o "$choice" == "N" ]; then
+          echo ""
+          ${abort}
+          VIBRATE_DONE
+          exit 0
+        else
+          ${error_get}
+          VIBRATE_ERROR
+          exit 1
+        fi
+ }
+  confirm="FOOTER"
+ if [ "$3" == "-y" -o "$3" == "-Y" ]; then #跳过确认环节
+   unset confirm
+ fi
+ ${confirm}
+ if [ not"$confirm" == not ]; then
+  curl -#OL ${site}$blob/$result
+ fi
+ download_size=`ls -sh ${reslut} | sed "s/ ${2}//g"` #统计文件大小
+ ${unpack}
+ progress
+ tar -xf ${reslut}
+ DONE
+ ${config_fun}
+ progress
+ export reslut=${reslut%.*}
+ cd "$reslut"
+ cmd=$(cat RELEASE)
+ $cmd
+ DONE
+ ${remove_dash}
+ rm -rf "$reslut"
+ ${done_setup}
+ VIBRATE_DONE
+
+elif [ "$1" == "status" -o "$1" == "st" ]; then
+  echo -e "\033[0m检查程序是否正常安装..."
+  if [ $(which poco)  ]; then
+    echo -e "\033[32mpoco已正常安装在$(which poco)"
+    echo -e "\033[0m检查是否可以正常运行..."
+    poco > /dev/null 2>&1
+    if [ $? == 0  ]; then
+      echo -e "\033[32m运行正常"
+    else
+      bash -x poco 1> $PREFIX/tmp/poco.log 2>&1
+      echo -e "\033[31m运行过程中出现错误，请检查程序是否正确安装,日志已存放在$PREFIX/tmp/poco.log"
+    fi
+  else
+    echo -e "\033[31mpoco未安装, 如果确认已经安装，请检查权限设置是否正确"
+    exit 2
+  fi
+  echo -e "\033[0m检查配置文件..."
+  if [ -f $PREFIX/etc/poco/poco.conf  ]; then
+     echo -e "\033[32m配置文件正常"
+     echo -e "\033[0m读取配置..."
+     CONFIG="$PREFIX/etc/poco/poco.conf"
+     echo 程序获取地址: http://$(sed '/^URL: /!d;s/.*: //' ${CONFIG})$(sed '/^blob: /!d;s/.*: //' ${CONFIG})
+     echo 依赖获取地址: http://$(sed '/^URL: /!d;s/.*: //' ${CONFIG})$(sed '/^tree: /!d;s/.*: //' ${CONFIG})
+     echo 程序列表获取地址: http://$(sed '/^listURL: /!d;s/.*: //' ${CONFIG})
+     echo -en "语言设置: "
+     if [ "$(sed '/^LANG: /!d;s/.*: //' ${CONFIG})" == "CN"  ]; then
+       echo -en 简体中文
+     elif [ "$(sed '/^LANG: /!d;s/.*: //' ${CONFIG})" == "EN"  ]; then
+       echo -en English
+     fi
+   echo -en "\n开发模式: "
+   development_mode_ifs=$(echo "${development_mode}" | tr [a-z] [A-Z])
+   if [ "$status" == "complete" -o "$development_mode_ifs" == "TRUE" ]; then
+      echo 启用
+   else
+      echo 禁用
+   fi
+ fi
+
+elif [ "$1" == "upgrade" -o "$1" == "up" ]; then
+  echo "Developing..."
+  
+elif [ "$1" == "console" -o "$1" == "c" ]; then
+  vi=$(WHICH vi)
+  vim=$(WHICH vim)
+  nano=$(WHICH nano)
+  center "\033[27;37;1m${select_editor}\033[0m"
+  inter
+  center "1. ${nano}"
+  center "2. ${vi}"
+  center "3. ${vim}"
+  inter
+  read -p "${choose_one}" choice
+  case $choice in
+    "1")
+    nano ${config_file}
+    ;;
+    "2")
+    vi ${config_file}
+    ;;
+    "3")
+    vim ${config_file}
+    ;;
+    *)
+    ${abort}
+  esac
+  echo "${update_conf}"
+  echo FETCH: http://$(sed '/^URL: /!d;s/.*: //' ${config_file})$(sed '/^blob: /!d;s/.*: //' ${config_file})
+  echo TREE: http://$(sed '/^URL: /!d;s/.*: //' ${config_file})$(sed '/^tree: /!d;s/.*: //' ${config_file})
+  echo LIST: http://$(sed '/^listURL: /!d;s/.*: //' ${config_file})
+  echo -en "LANG: "
+     if [ "$(sed '/^LANG: /!d;s/.*: //' ${config_file})" == "CN"  ]; then
+       echo -en 简体中文
+     elif [ "$(sed '/^LANG: /!d;s/.*: //' ${config_file})" == "EN"  ]; then
+       echo -en English
+     fi
+   echo -en "\nDEV: "
+   development_mode_ifs=$(echo "${development_mode}" | tr [a-z] [A-Z])
+   if [ "$status" == "complete" -o "$development_mode_ifs" == "TRUE" ]; then
+      echo Enable
+   else
+      echo False
+   fi
+  inter
+
+#主体(十扇区) COMMAND_NOT_FOUND
+else
+  ${void}
+  poco help
+fi
+
+WRITE() {
+DATE=$(date)
+PWD=$(pwd)
+echo "Operation:$operation  Date:$DATE  PID:$$  Return code:$?  Site:$site  Path:$PWD" >> $log_file
+echo " " >> $log_file
+}
+
+echo -ne "\033[?25h" #显示光标
+if [ ! -f "$log_file" ]; then
+  touch $log_file
+fi
+WRITE
+echo "">${cache} #清除缓存
