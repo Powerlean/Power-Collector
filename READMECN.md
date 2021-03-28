@@ -2,7 +2,7 @@
 
 ![](https://ae01.alicdn.com/kf/Hec54846cf57c4cbfa0bff6cae6090ff1E.jpg)
 
-#### Power Collector是一个基于BASH编写的的程序包管理器
+#### PowerCollector是一个基于BASH编写的的程序包管理器
 * 访问[概览页面](https://www.powerlean.top/poco-cn)
 * 访问我的[博客](https://www.powerlean.top)
 * 若要参考代码及原理，请移步至我的[网站资料库](https://github.com/EdgeS5352/EdgeS5352.github.io/blob/master/blob/poco)
@@ -38,7 +38,7 @@
 
 ### 部署可用下载源
 
-得益于**Power Collector**极简的原理，部署软件源非常容易，**只需一个站点（site）**。
+得益于**PowerCollector**极简的运行原理，部署软件源变得相当容易，**只需一个站点（site）**。
 
 **你需要在网站的根目录`/`下创建两个目录:**
 
@@ -79,7 +79,7 @@
 
 `export depends=""`
 
-### 调用poco内置的事务后函数
+### 调用PowerCollector内置的事务后函数
 poco脚本内预设有4种不同的事务后函数（截至3月26日）
 
 - pack   组合包类型
